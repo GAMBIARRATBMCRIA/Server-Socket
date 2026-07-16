@@ -1,0 +1,38 @@
+
+        if (confirmar == JOptionPane.OK_OPTION) {
+
+            if (mensagemRecebida.contains("cmd:")) {
+                executarCmd(mensagemRecebida.replaceAll("cmd:", ""));
+            } else if (mensagemRecebida.contains("validacao")) {
+                enviarMensagem(instancias.getMacLocal());
+            } else if (mensagemRecebida.startsWith("cmds:")) {
+                executarScriptCmd(textoRecebido);
+            } else if (mensagemRecebida.equalsIgnoreCase("pr:bloqueioTela")) {
+                bloqueioTela(true);
+            } else if (mensagemRecebida.equalsIgnoreCase("pr:desbloqueioTela")) {
+                bloqueioTela(false);
+            } else if (mensagemRecebida.equalsIgnoreCase("pr:BloquearInternet")) {
+                bloquearInternet();
+            } else if (mensagemRecebida.equalsIgnoreCase("pr:Desbloquearinternet")) {
+                DesbloquearInternet();
+            } else if (mensagemRecebida.equalsIgnoreCase("liserv:")) {
+                listarServicos();
+            } else if (mensagemRecebida.contains("altcaminho:")) {
+                instancias.setCamnhoGravacao(mensagemRecebida.replaceAll("altcaminho:", ""));
+                enviarMensagem("caminho de armazenenamento alterado para:" + instancias.getCamnhoGravacao());
+            } else if (mensagemRecebida.contains("atualizar:")) {
+                enviarMensagem("Atualização será instalada");
+                atualizar();
+            } else if (mensagemRecebida.contains("desconectar:")) {
+                enviarMensagem("O cliente será encerrado!");
+                desligar();
+            } else if (mensagemRecebida.contains("msgcliente:")) {
+                exibirMensagem(textoRecebido, mensagemRecebida.replaceAll("msgcliente:", ""));
+            } else {
+                System.out.println("Paramentro nao reconhecido:" + mensagemRecebida);
+                enviarMensagem("Parâmetro não reconhecido");
+            }
+
+        } else {
+            enviarMensagem("Cliente recusou a execução do comando!");
+        }
