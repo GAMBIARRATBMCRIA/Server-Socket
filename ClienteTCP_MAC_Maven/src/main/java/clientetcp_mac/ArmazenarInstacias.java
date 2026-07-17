@@ -25,7 +25,6 @@ public class ArmazenarInstacias {
     public ArmazenarInstacias() {
     }
 
-    
     public ArmazenarInstacias(BufferedReader in, PrintWriter out, Socket socket, String macLocal, String caminhoUser) {
         this.in = in;
         this.out = out;
@@ -66,6 +65,5 @@ public class ArmazenarInstacias {
     public void setTipodado(String tipodado) {
         this.tipodado = tipodado;
     }
-    
-    
+
 }

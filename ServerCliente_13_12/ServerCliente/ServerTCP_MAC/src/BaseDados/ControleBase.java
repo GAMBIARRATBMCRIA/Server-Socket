@@ -64,7 +64,7 @@ public class ControleBase {
                 BaseCadastradaInfoMaquinas.add(info);
             }
         }
-        imprimirArray();
+        //imprimirArray();
         return true;
     }
 
@@ -130,23 +130,11 @@ public class ControleBase {
 
                 if (macConectado.equalsIgnoreCase(macCadastradoBase)) {
                     if (this.clistesLista.get(i).getonformacaoesCliente().getBancada().contains("==")) {
-//                        ClientesConectados infoCliente = new ClientesConectados();
-//                        ClientesConectados listaConectados = this.clistesLista.get(i).getonformacaoesCliente();
-//                        infomacaoMaquinas inf = this.BaseCadastradaInfoMaquinas.get(j);
-//                        
-//                        infoCliente.setBancada(inf.getBancada());
-//                        infoCliente.setMacAddres(inf.getMacAddres());
-//                        infoCliente.setPosicao(inf.getPosicao());
-//                        infoCliente.setSetor(inf.getSetor());
-//                        infoCliente.setTombo(inf.getTombo());
-//                        
-//
-//                        this.clistesLista.get(i).setInformacoesCliente(infoCliente);
+
                         this.clistesLista.get(i).verificaClienteBanco(macConectado);
                     }
                 }
             }
-//            infomacaoMaquinas inf = Servicos.Instancias.getExecucaoAtividadesInstacia().procuraClientes(this.clistesLista.get(i).getonformacaoesCliente().getMacAddres());
 
         }
 

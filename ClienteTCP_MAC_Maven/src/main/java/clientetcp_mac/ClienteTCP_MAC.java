@@ -108,9 +108,9 @@ public class ClienteTCP_MAC {
 
         if (inicializar) {
             InstanciasGlobais.setBandejaSistema(new bandejaSistema());
-            System.out.println("atribuindo bandeja");
+            //System.out.println("atribuindo bandeja");;
             InstanciasGlobais.getBandejaSistema().abriBandeja();
-            System.out.println("==============================================================");
+            //System.out.println("==============================================================");
             cli.ipServer = config.enderecoSevidor;
             cli.conecta();
 
@@ -205,7 +205,7 @@ public class ClienteTCP_MAC {
         }
     }
 
-    private String validar() {
+    public String validar() {
         String macAddres = "";
         try {
             InetAddress ipAddress = socket.getLocalAddress();

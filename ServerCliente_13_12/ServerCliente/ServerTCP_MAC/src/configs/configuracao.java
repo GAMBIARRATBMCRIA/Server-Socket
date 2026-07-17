@@ -30,4 +30,9 @@ public class configuracao {
     public static final Color B11 = new Color(255, 0, 255);   // Magenta
     public static final Color B12 = new Color(128, 0, 0);     // Marrom
     public static final Color B00 = new Color(0, 0, 0);     // Marrom
+    
+    public static final Color VIDEO_CONNECTED = new Color(0, 255, 0);     // verde
+    public static final Color VIDEO_DECCONNECTED = new Color(255, 0, 0);     // vermeho
+    
+    
 }

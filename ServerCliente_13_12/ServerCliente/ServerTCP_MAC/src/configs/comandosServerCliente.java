@@ -49,6 +49,12 @@ public class comandosServerCliente {
     public static void DesbloquearInternet() {
         inserirComando("pr:" + "Desbloquearinternet");
     }
+    public static void IniciarTranmissaoVideo() {
+        inserirComando("pr:" + "StartRemoteDesktop");
+    }
+    public static void EncerrarTranmissaoVideo() {
+        inserirComando("pr:" + "StopRemoteDesktop");
+    }
 
     public static void AutenticadorRede(String login, String senha) {
         if (login.isEmpty()) {

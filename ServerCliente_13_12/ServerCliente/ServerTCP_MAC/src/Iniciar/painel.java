@@ -99,6 +99,8 @@ public class painel extends javax.swing.JPanel {
         OpcoesSecundarias = new javax.swing.JDialog();
         jButton6 = new javax.swing.JButton();
         jButton22 = new javax.swing.JButton();
+        jButton23 = new javax.swing.JButton();
+        jButton24 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         iniciarServerButton = new javax.swing.JButton();
         jButton12 = new javax.swing.JButton();
@@ -538,15 +540,35 @@ public class painel extends javax.swing.JPanel {
             }
         });
 
+        jButton23.setBackground(new java.awt.Color(0, 204, 102));
+        jButton23.setText("Abrir Painel de Vídeos");
+        jButton23.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton23ActionPerformed(evt);
+            }
+        });
+
+        jButton24.setBackground(new java.awt.Color(0, 204, 102));
+        jButton24.setText("Iniciar Vídeo");
+        jButton24.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton24ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout OpcoesSecundariasLayout = new javax.swing.GroupLayout(OpcoesSecundarias.getContentPane());
         OpcoesSecundarias.getContentPane().setLayout(OpcoesSecundariasLayout);
         OpcoesSecundariasLayout.setHorizontalGroup(
             OpcoesSecundariasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(OpcoesSecundariasLayout.createSequentialGroup()
                 .addGap(12, 12, 12)
-                .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(OpcoesSecundariasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton23, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(8, 8, 8)
-                .addComponent(jButton22, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(OpcoesSecundariasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton24, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton22, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE))
                 .addContainerGap())
         );
         OpcoesSecundariasLayout.setVerticalGroup(
@@ -556,7 +578,11 @@ public class painel extends javax.swing.JPanel {
                 .addGroup(OpcoesSecundariasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton22, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(298, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(OpcoesSecundariasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton23, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton24, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(261, Short.MAX_VALUE))
         );
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -691,14 +717,14 @@ public class painel extends javax.swing.JPanel {
 
             },
             new String [] {
-                "NOME", "MAC", "ENDEÇO IP", "GRUPO", "BANCADA", "POSIÇÃO", "STATUS", "ACEITAR COMANDO"
+                "NOME", "MAC", "ENDEÇO IP", "GRUPO", "BANCADA", "POSIÇÃO", "STATUS", "ACEITAR COMANDO", "VIDEO"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, true
+                false, false, false, false, false, false, false, true, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -722,6 +748,11 @@ public class painel extends javax.swing.JPanel {
         });
         jScrollPane2.setViewportView(tableInterface);
         tableInterface.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        if (tableInterface.getColumnModel().getColumnCount() > 0) {
+            tableInterface.getColumnModel().getColumn(7).setPreferredWidth(45);
+            tableInterface.getColumnModel().getColumn(8).setResizable(false);
+            tableInterface.getColumnModel().getColumn(8).setPreferredWidth(8);
+        }
 
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel10.setText("Máquinas Conectadas");
@@ -1208,7 +1239,7 @@ public class painel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
-       
+
         ExecucaoAtividadesTela.enviarArquivo(labelMaquina.getText());
     }//GEN-LAST:event_jButton11ActionPerformed
 
@@ -1324,7 +1355,6 @@ public class painel extends javax.swing.JPanel {
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
 
-
         if (jComboBox1.getSelectedItem().toString().equalsIgnoreCase("Dark Mode")) {
             if (dark_aplicado == false) {
                 jPanel1.setBackground(new java.awt.Color(102, 102, 102));
@@ -1354,8 +1384,8 @@ public class painel extends javax.swing.JPanel {
             configs.comandosServerCliente.setLigarUSb();
             jButton21.setText("Desligar USB");
         }
-        
-        
+
+
     }//GEN-LAST:event_jButton21ActionPerformed
 
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
@@ -1376,6 +1406,24 @@ public class painel extends javax.swing.JPanel {
     private void jButton22ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton22ActionPerformed
         configs.comandosServerCliente.setCaminhoAtualizacao();
     }//GEN-LAST:event_jButton22ActionPerformed
+
+    private void jButton23ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton23ActionPerformed
+        // TODO add your handling code here:
+        Instancias.getVideosConectados().setVisible(true);
+
+    }//GEN-LAST:event_jButton23ActionPerformed
+
+    private void jButton24ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton24ActionPerformed
+
+        if (jButton24.getText().equalsIgnoreCase("Iniciar Vídeo")) {
+            configs.comandosServerCliente.IniciarTranmissaoVideo();
+            jButton24.setText("Encerrar Vídeo");
+        } else {
+            configs.comandosServerCliente.EncerrarTranmissaoVideo();
+            jButton24.setText("Iniciar Vídeo");
+        }
+
+    }//GEN-LAST:event_jButton24ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1408,6 +1456,8 @@ public class painel extends javax.swing.JPanel {
     private javax.swing.JButton jButton20;
     private javax.swing.JButton jButton21;
     private javax.swing.JButton jButton22;
+    private javax.swing.JButton jButton23;
+    private javax.swing.JButton jButton24;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;

@@ -6,6 +6,8 @@
 package Servicos;
 
 import BaseDados.ClientesConectados;
+import Iniciar.PainelVideoIndividual;
+import static Iniciar.QuadroVideos.tabPainelvideos;
 import configs.comandosServerCliente;
 import java.awt.Color;
 import java.awt.Component;
@@ -37,7 +39,7 @@ public class ExecucaoAtividadesTela {
         Iniciar.painel.labelConcAtivas.setText(quantidade);
     }
 
-    public synchronized static void adicionarTabPanner(ClientesConectados infor) {
+    public synchronized static void adicionarTabPannerComunicacao(ClientesConectados infor) {
         if (!verificarExistenciadeTab(infor.getMacAddres())) {
             JLabel labelNome = new JLabel();
             JLabel LabelMac = new JLabel();
@@ -135,7 +137,29 @@ public class ExecucaoAtividadesTela {
             barraprogresso.setVisible(false);
             barraprogresso.setValue(0);
             Iniciar.clientesConectados.tablePanneDialogCliente.add(infor.getBancada() + "_" + infor.getPosicao() + ":" + infor.getMacAddres(), painelModelo);
-            //Iniciar.clientesConectados.tablePanneDialogCliente.getse
+        }
+    }
+
+    public synchronized static void adicionarTabPannerVideo(ClientesConectados infor) {
+
+        if (!verificarExistenciadeTabVideo(infor.getMacAddres())) {
+            PainelVideoIndividual painelModeloVideo =  infor.getPainelVideo();
+            
+            
+            tabPainelvideos.setTabPlacement(javax.swing.JTabbedPane.LEFT);
+
+            javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(painelModeloVideo);
+            painelModeloVideo.setLayout(jPanel1Layout);
+            jPanel1Layout.setHorizontalGroup(
+                    jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGap(0, 559, Short.MAX_VALUE)
+            );
+            jPanel1Layout.setVerticalGroup(
+                    jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGap(0, 419, Short.MAX_VALUE)
+            );
+
+            Instancias.getVideosConectados().tabPainelvideos.add(infor.getBancada() + "_" + infor.getPosicao() + ":" + infor.getMacAddres(), painelModeloVideo);
         }
     }
 
@@ -149,6 +173,39 @@ public class ExecucaoAtividadesTela {
         }
 
         return tem;
+    }
+
+    public synchronized static Boolean verificarExistenciadeTabVideo(String MAC) {
+        Boolean tem = false;
+        for (int i = 0; i < Iniciar.QuadroVideos.tabPainelvideos.getTabCount(); i++) {
+            if (Iniciar.QuadroVideos.tabPainelvideos.getTitleAt(i).contains(MAC)) {
+                tem = true;
+                break;
+            }
+        }
+
+        return tem;
+    }
+
+    public synchronized static void removerTabPanneVideo(String Mac) {
+        System.out.println("qtd:" + Iniciar.QuadroVideos.tabPainelvideos.getTabCount());
+
+        for (int i = Iniciar.QuadroVideos.tabPainelvideos.getTabCount() - 1; i >= 0; i--) {
+            JPanel painelRemover;
+            Component component = Iniciar.QuadroVideos.tabPainelvideos.getComponentAt(i);
+
+            if (component instanceof JPanel) {
+                painelRemover = (JPanel) component;
+
+                String tiulo = painelRemover.getName();
+
+                if (tiulo.contains(Mac)) {
+                    Iniciar.QuadroVideos.tabPainelvideos.removeTabAt(i);
+                    //Instancias.getCarregarTableInstacia().tabelaConectados();
+                }
+            }
+        }
+
     }
 
     public synchronized static void removerTabPanne(String Mac) {
@@ -228,8 +285,8 @@ public class ExecucaoAtividadesTela {
             Instancias.getExecucaoAtividadesInstacia().enviarMensagemTexto(areaTexto.getText(), "mac", lbMaquina.replaceAll("Mac:", ""));
         }
     }
-    
-    public static void autenticarNaRede(String login, String senha){
+
+    public static void autenticarNaRede(String login, String senha) {
         comandosServerCliente.AutenticadorRede(login, senha);
     }
 
@@ -243,20 +300,20 @@ public class ExecucaoAtividadesTela {
             modelo.addRow(linha);
         }
     }
-    
-    public static void setHabilitarEnvioMaquina(Boolean habilitar, String mac){
+
+    public static void setHabilitarEnvioMaquina(Boolean habilitar, String mac) {
         Instancias.getCarregarTableInstacia().setHabilitadoEnvio(habilitar, mac);
-        
-        System.out.println("Mac:"+mac+" habilitado para envio:"+habilitar);
+
+        System.out.println("Mac:" + mac + " habilitado para envio:" + habilitar);
     }
-    
-    public static void selectTablePane(String mac){
+
+    public static void selectTablePane(String mac) {
         for (int i = 0; i < Iniciar.clientesConectados.tablePanneDialogCliente.getTabCount(); i++) {
-            
+
             if (Iniciar.clientesConectados.tablePanneDialogCliente.getTitleAt(i).contains(mac)) {
                 Iniciar.clientesConectados.tablePanneDialogCliente.setSelectedIndex(i);
-            }  
+            }
         }
-        
+
     }
 }

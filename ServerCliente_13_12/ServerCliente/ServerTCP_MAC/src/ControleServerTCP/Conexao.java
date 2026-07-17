@@ -18,6 +18,7 @@ public class Conexao {
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private Thread tr;
+    private ServerVideo serverVideo = new ServerVideo();
 
     public void receberClientes() {
         tr = new Thread() {
@@ -30,6 +31,7 @@ public class Conexao {
                     try {
                         clientSocket = new Socket();
                         clientSocket = serverSocket.accept();
+                        
                         new ComunicacaoClienteServer(clientSocket);
                     } catch (Exception ex) {
                         System.out.println("Erro ao criar novo socket:" + ex.getMessage());
@@ -95,6 +97,7 @@ public class Conexao {
         Boolean iniciado = false;
         try {
             serverSocket = new ServerSocket(configs.configuracao.portaConexao); // Porta do servidor
+            serverVideo.iniciarServidorVide(5001); // Inicia servidor de vídeo secundário
             iniciado = true;
         } catch (Exception ex) {
             System.out.println("Erro Iniciar Server:" + ex.getMessage());
@@ -107,7 +110,9 @@ public class Conexao {
     public Boolean desligarServerCliente() {
         Boolean fechado = false;
         Iniciar.clientesConectados.tablePanneDialogCliente.removeAll();
+        
         try {
+            serverVideo.desligarServidorVideo();
             clientSocket.close();
             serverSocket.close();
             tr.interrupt();

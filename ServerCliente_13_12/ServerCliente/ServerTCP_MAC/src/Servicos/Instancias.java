@@ -20,6 +20,8 @@ public class Instancias extends Thread{
     private static CarregarTable carregarTableInstacia;
     
     private static clientesConectados clientesConctadosTela;
+    private static QuadroVideos videosConectados;
+    
     public Instancias() {
         
         controlebaseIntancia = new ControleBase();
@@ -29,7 +31,10 @@ public class Instancias extends Thread{
         carregarTableInstacia  = new CarregarTable();
         
         clientesConctadosTela = new clientesConectados();
-        clientesConectados.tablePanneDialogCliente.removeAll();
+        clientesConctadosTela.tablePanneDialogCliente.removeAll();
+        
+        videosConectados = new QuadroVideos();
+        videosConectados.tabPainelvideos.removeAll();
         
     }
     
@@ -61,5 +66,10 @@ public class Instancias extends Thread{
         return clientesConctadosTela;
     }
 
+    public static QuadroVideos getVideosConectados() {
+        return videosConectados;
+    }
+
+    
     
 }

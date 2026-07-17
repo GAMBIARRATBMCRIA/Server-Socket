@@ -2,6 +2,7 @@ package Servicos;
 
 import BaseDados.ClientesConectados;
 import BaseDados.infomacaoMaquinas;
+import ControleServerTCP.ServerVideo;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -25,17 +26,19 @@ public class ComunicacaoClienteServer extends Thread {
     private BufferedWriter enviarBuffer;
     private PrintWriter out;
     private Socket clienteSocket;
-    //private String Status;
 
     private ClientesConectados infoCliente;
 
-    public ComunicacaoClienteServer(Socket socketClinete) {
+    public ComunicacaoClienteServer(Socket socketCliente) {
         try {
-            clienteSocket = socketClinete;
+            clienteSocket = socketCliente;  
+
             in = new BufferedReader(new InputStreamReader(clienteSocket.getInputStream()));
             out = new PrintWriter(clienteSocket.getOutputStream(), true);
             enviarBuffer = new BufferedWriter(new OutputStreamWriter(clienteSocket.getOutputStream()));
 
+            //para o vídeo
+            
             start();
         } catch (Exception ex) {
             System.out.println("Erro no cliente Construtor Comunicação cliente:" + ex.getMessage());
@@ -71,7 +74,6 @@ public class ComunicacaoClienteServer extends Thread {
             infoCliente.setBarraProgresso(new JProgressBar(0, 100));
 
             Instancias.getControlebaseIntancia().setClistesLista(this);
-            //wait();
             Instancias.getCarregarTableInstacia().tabelaConectados();
 
             String linha;
@@ -79,7 +81,7 @@ public class ComunicacaoClienteServer extends Thread {
             while ((linha = in.readLine()) != null) {
 
                 infoCliente.getTextoArea().append(linha + "\n");
-                System.out.println("recebido do cliente:" + linha);
+//                System.out.println("recebido do cliente:" + linha);
 
                 if (linha.startsWith("iniservice:")) {
                     carregarService(linha);
@@ -109,16 +111,16 @@ public class ComunicacaoClienteServer extends Thread {
 
     private Boolean autenticarCliente() {
         boolean validado = false;
-        String versaoCliente="0";
+        String versaoCliente = "0";
         try {
 
             String line = in.readLine();
             String dados[] = line.split(":");
             line = dados[0];
-            if (dados.length>1) {
-                 versaoCliente = dados[1];
+            if (dados.length > 1) {
+                versaoCliente = dados[1];
             }
-           
+
             System.out.println("linha recebida:" + line);
 
             if (line.contains("Erro:mac")) {
@@ -136,10 +138,10 @@ public class ComunicacaoClienteServer extends Thread {
         } catch (Exception ex) {
             ExecucaoAtividadesTela.publicarAvido("Erro na validação:" + ex.getMessage());
         }
-        
+
         if (versaoCliente.equalsIgnoreCase(configs.configuracao.currentVersionClient)) {
             this.infoCliente.setStatusCliente("Ativo/Atualizado");
-        }else{
+        } else {
             this.infoCliente.setStatusCliente("Ativo/Desatualizado");
         }
 
@@ -195,6 +197,8 @@ public class ComunicacaoClienteServer extends Thread {
             infoCliente.setSetor(inf.getSetor());
             infoCliente.setTombo(inf.getTombo());
             infoCliente.setThreandCliente(this);
+            
+            infoCliente.setIpAddress(this.clienteSocket.getInetAddress().getHostAddress().toString());
             achou = true;
         } else {
             if (!naoContemBaco(mac)) {

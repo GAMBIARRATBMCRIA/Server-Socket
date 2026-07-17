@@ -12,6 +12,7 @@ package BaseDados;
  */
 public class infomacaoMaquinas{
     private String macAddres;
+    private String ipAddress;
     private String setor;
     private String bancada;
     private String posicao;
@@ -57,5 +58,14 @@ public class infomacaoMaquinas{
     public void setTombo(String tombo) {
         this.tombo = tombo;
     }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+    
     
 }

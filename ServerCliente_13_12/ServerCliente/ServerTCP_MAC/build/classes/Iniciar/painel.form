@@ -653,11 +653,17 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                  <Component id="jButton6" max="32767" attributes="0"/>
+                  <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="jButton6" max="32767" attributes="0"/>
+                      <Component id="jButton23" max="32767" attributes="0"/>
+                  </Group>
                   <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
-                  <Component id="jButton22" min="-2" pref="154" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="jButton24" max="32767" attributes="0"/>
+                      <Component id="jButton22" pref="154" max="32767" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -669,7 +675,12 @@
                       <Component id="jButton6" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
                       <Component id="jButton22" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="298" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jButton23" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
+                      <Component id="jButton24" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace pref="261" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -695,6 +706,28 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton22ActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="jButton23">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="66" green="cc" red="0" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Abrir Painel de V&#xed;deos"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton23ActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="jButton24">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="66" green="cc" red="0" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Iniciar V&#xed;deo"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton24ActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
@@ -1002,7 +1035,7 @@
                   <Color blue="66" green="66" red="66" type="rgb"/>
                 </Property>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="8" rowCount="0">
+                  <Table columnCount="9" rowCount="0">
                     <Column editable="false" title="NOME" type="java.lang.Object"/>
                     <Column editable="false" title="MAC" type="java.lang.Object"/>
                     <Column editable="false" title="ENDE&#xc7;O IP" type="java.lang.Object"/>
@@ -1011,6 +1044,7 @@
                     <Column editable="false" title="POSI&#xc7;&#xc3;O" type="java.lang.Object"/>
                     <Column editable="false" title="STATUS" type="java.lang.Object"/>
                     <Column editable="true" title="ACEITAR COMANDO" type="java.lang.Boolean"/>
+                    <Column editable="false" title="VIDEO" type="java.lang.Object"/>
                   </Table>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
@@ -1051,7 +1085,12 @@
                       <Editor/>
                       <Renderer/>
                     </Column>
-                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="45" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="8" resizable="false">
                       <Title/>
                       <Editor/>
                       <Renderer/>

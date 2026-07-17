@@ -5,6 +5,7 @@
  */
 package BaseDados;
 
+import Iniciar.PainelVideoIndividual;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.PrintWriter;
@@ -19,6 +20,8 @@ import javax.swing.JTextArea;
 public class ClientesConectados extends infomacaoMaquinas {
 
     private Socket clientesocket;
+    private Socket clienteSoketVideo;
+    
     private BufferedReader entrada;
     private BufferedWriter saida;
     private PrintWriter saidaPrint;
@@ -27,7 +30,15 @@ public class ClientesConectados extends infomacaoMaquinas {
     private JTextArea textoArea;
     private JProgressBar barraProgresso;
     private String statusCliente;
+    
+    private PainelVideoIndividual painelVideo;
+    private Boolean transmissaoAtiva;
 
+    public ClientesConectados() {
+        painelVideo = new PainelVideoIndividual();
+        transmissaoAtiva = false;
+    }
+    
     public Socket getClientesocket() {
         return clientesocket;
     }
@@ -107,5 +118,30 @@ public class ClientesConectados extends infomacaoMaquinas {
     public void setStatusCliente(String statusCliente) {
         this.statusCliente = statusCliente;
     }
+
+    public PainelVideoIndividual getPainelVideo() {
+        return painelVideo;
+    }
+
+    public void setPainelVideo(PainelVideoIndividual painelVideo) {
+        this.painelVideo = painelVideo;
+    }
+
+    public Socket getClienteSoketVideo() {
+        return clienteSoketVideo;
+    }
+
+    public void setClienteSoketVideo(Socket clienteSoketVideo) {
+        this.clienteSoketVideo = clienteSoketVideo;
+    }
+
+    public Boolean getTransmissaoAtiva() {
+        return transmissaoAtiva;
+    }
+
+    public void setTransmissaoAtiva(Boolean transmissaoAtiva) {
+        this.transmissaoAtiva = transmissaoAtiva;
+    }
+
     
 }
