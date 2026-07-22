@@ -1414,12 +1414,14 @@ public class painel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton23ActionPerformed
 
     private void jButton24ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton24ActionPerformed
-
-        if (jButton24.getText().equalsIgnoreCase("Iniciar Vídeo")) {
-            configs.comandosServerCliente.IniciarTranmissaoVideo();
+       
+        if (jButton24.getText().equalsIgnoreCase("Iniciar Vídeo")) { 
+            ExecucaoAtividadesTela.enviarMensagem(labelMaquina.getText(),  configs.comandosServerCliente.IniciarTranmissaoVideo(), permissaoAceite);
+            
             jButton24.setText("Encerrar Vídeo");
         } else {
-            configs.comandosServerCliente.EncerrarTranmissaoVideo();
+                       ExecucaoAtividadesTela.enviarMensagem(labelMaquina.getText(),  configs.comandosServerCliente.EncerrarTranmissaoVideo(), permissaoAceite);
+
             jButton24.setText("Iniciar Vídeo");
         }
 

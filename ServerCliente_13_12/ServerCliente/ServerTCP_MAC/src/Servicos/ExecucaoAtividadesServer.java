@@ -266,16 +266,11 @@ public class ExecucaoAtividadesServer {
         }
         return concluidoSucesso;
     }
+    
+   
 
     public String calcularHashArquivo(String caminhoArquivo) throws Exception {
-//        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-//        byte[] fileBytes = Files.readAllBytes(Paths.get(caminhoArquivo));
-//        byte[] hashBytes = digest.digest(fileBytes);
-//        StringBuilder sb = new StringBuilder();
-//        for (byte b : hashBytes) {
-//            sb.append(String.format("%02x", b));
-//        }
-//        return sb.toString();
+
 
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(caminhoArquivo))) {

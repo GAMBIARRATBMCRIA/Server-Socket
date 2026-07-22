@@ -5,8 +5,8 @@
         <group/>
         <group name="Server-Socket">
             <file>file:/C:/Users/LAB_01/Documents/SINC_DRIVER/Server-Socket/ServerCliente_13_12/ServerCliente/ServerTCP_MAC/src/Servicos/ExecucaoAtividadesTela.java</file>
+            <file>file:/C:/Users/LAB_01/Documents/SINC_DRIVER/Server-Socket/ServerCliente_13_12/ServerCliente/ServerTCP_MAC/src/Iniciar/PainelVideoIndividual.java</file>
             <file>file:/C:/Users/LAB_01/Documents/SINC_DRIVER/Server-Socket/ServerCliente_13_12/ServerCliente/ServerTCP_MAC/src/Servicos/ComunicacaoClienteServer.java</file>
-            <file>file:/C:/Users/LAB_01/Documents/SINC_DRIVER/Server-Socket/ServerCliente_13_12/ServerCliente/ServerTCP_MAC/src/Servicos/Instancias.java</file>
             <file>file:/C:/Users/LAB_01/Documents/SINC_DRIVER/Server-Socket/ServerCliente_13_12/ServerCliente/ServerTCP_MAC/src/Iniciar/painel.java</file>
             <file>file:/C:/Users/LAB_01/Documents/SINC_DRIVER/Server-Socket/ServerCliente_13_12/ServerCliente/ServerTCP_MAC/src/ControleServerTCP/ServerVideo.java</file>
         </group>

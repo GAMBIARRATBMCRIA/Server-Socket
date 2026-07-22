@@ -60,6 +60,8 @@ public class PainelVideoIndividual extends javax.swing.JPanel {
 
         jLabel1 = new javax.swing.JLabel();
 
+        setName("testeName"); // NOI18N
+
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Sem imagem");
 
