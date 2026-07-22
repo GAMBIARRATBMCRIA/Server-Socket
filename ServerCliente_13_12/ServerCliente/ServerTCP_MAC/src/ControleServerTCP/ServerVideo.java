@@ -27,18 +27,15 @@ public class ServerVideo {
                     // Thread para escutar os pacotes de vídeo deste cliente
                     new Thread(() -> {
                         PainelVideoIndividual painelDoCliente = new PainelVideoIndividual();
-                       ComunicacaoClienteServer clienteVideo = procurarClienteConectado(clientSocket.getInetAddress().getHostAddress());
-                       clienteVideo.getonformacaoesCliente().setPainelVideo(painelDoCliente);
-                       
+                        ComunicacaoClienteServer clienteVideo = procurarClienteConectado(clientSocket.getInetAddress().getHostAddress());
+                        clienteVideo.getonformacaoesCliente().setPainelVideo(painelDoCliente);
 
                         try (DataInputStream in = new DataInputStream(clientSocket.getInputStream())) {
                             clienteVideo.getonformacaoesCliente().setTransmissaoAtiva(Boolean.TRUE);
                             ExecucaoAtividadesTela.adicionarTabPannerVideo(clienteVideo.getonformacaoesCliente());
 
-
                             //adicionarTabPannerVideo
-                            
-                            while (true) {
+                            while (!clientSocket.isClosed()) {
                                 int tipo = in.readInt();
                                 int tamanho = in.readInt();
                                 byte[] payload = new byte[tamanho];
@@ -50,9 +47,13 @@ public class ServerVideo {
                                     painelDoCliente.atualizarFrame(payload);
                                 }
                             }
+                            ExecucaoAtividadesTela.removerTabPanneVideo(clienteVideo.getonformacaoesCliente().getMacAddres());
                         } catch (Exception e) {
                             System.out.println("Conexão de vídeo encerrada para o cliente.");
-                             clienteVideo.getonformacaoesCliente().setTransmissaoAtiva(Boolean.FALSE);
+                            
+                            clienteVideo.getonformacaoesCliente().setTransmissaoAtiva(Boolean.FALSE);
+                            ExecucaoAtividadesTela.removerTabPanneVideo(clienteVideo.getonformacaoesCliente().getMacAddres());
+
                         }
                     }).start();
                 }

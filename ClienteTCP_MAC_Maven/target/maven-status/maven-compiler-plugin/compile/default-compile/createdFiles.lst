@@ -1,7 +1,12 @@
+clientetcp_mac\modulos\impl\ModuloTela.class
+clientetcp_mac\modulos\impl\ModuloInternet.class
+clientetcp_mac\modulos\impl\ModuloMensagem.class
 telas\bloqueioTela$3.class
 telas\MensagemConversa$3.class
 telas\bloqueioTela$1.class
 telas\telaLog.class
+clientetcp_mac\modulos\impl\ModuloCmd.class
+clientetcp_mac\modulos\impl\ModuloValidacao.class
 clientetcp_mac\bandejaSistema$2.class
 clientetcp_mac\ClienteTCP_MAC$CustomOutputStream.class
 clientetcp_mac\receberArquivo.class
@@ -11,8 +16,12 @@ clientetcp_mac\BuscaServer.class
 telas\MensagemConversa$2.class
 telas\bloqueioTela$2.class
 Global\config.class
+clientetcp_mac\modulos\ModuloRegistry.class
+clientetcp_mac\modulos\impl\ModuloSistema.class
+clientetcp_mac\modulos\IModulo.class
 clientetcp_mac\ClienteTCP_MAC.class
 telas\bloqueioTela$4.class
+clientetcp_mac\modulos\impl\ModuloRemoteDesktop.class
 telas\bloqueioTela$5.class
 telas\telaLog$1.class
 clientetcp_mac\bandejaSistema$1.class
@@ -23,3 +32,4 @@ clientetcp_mac\bandejaSistema.class
 clientetcp_mac\ExecutarComando.class
 clientetcp_mac\ArmazenarInstacias.class
 Global\Controle_log_Handler.class
+clientetcp_mac\modulos\impl\ModuloServicos.class

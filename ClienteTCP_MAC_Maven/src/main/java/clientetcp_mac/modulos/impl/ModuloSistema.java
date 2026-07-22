@@ -17,11 +17,23 @@ public class ModuloSistema implements IModulo {
     public void executar(String comando, ArmazenarInstacias instancias, ArrayList<String> textoRecebido) {
         if (comando.contains("altcaminho:")) {
             String caminho = comando.replaceAll("altcaminho:", "");
-            if (verifica_diretorio(caminho, instancias)) {
+            if (caminho.startsWith("//att//")) {
+                File diretorioAtualizacao = new File(System.getProperty("user.dir"), "atualizacao");
+                if (!diretorioAtualizacao.exists()) {
+                    diretorioAtualizacao.mkdirs();
+                }
+                caminho = diretorioAtualizacao.getAbsolutePath() + "\\";
                 instancias.setCamnhoGravacao(caminho);
                 enviarMensagem("caminho de armazenenamento alterado para:" + instancias.getCamnhoGravacao(), instancias);
             } else {
-                enviarMensagem("caminho não é válido!", instancias);
+                
+                if (verifica_diretorio(caminho, instancias)) {
+                    
+                    instancias.setCamnhoGravacao(caminho);
+                    enviarMensagem("caminho de armazenenamento alterado para:" + instancias.getCamnhoGravacao(), instancias);
+                } else {
+                    enviarMensagem("caminho não é válido!", instancias);
+                }
             }
         } else if (comando.contains("atualizar:")) {
             enviarMensagem("Atualização será instalada", instancias);

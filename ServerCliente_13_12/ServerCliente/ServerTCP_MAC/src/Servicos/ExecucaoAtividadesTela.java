@@ -8,6 +8,7 @@ package Servicos;
 import BaseDados.ClientesConectados;
 import Iniciar.PainelVideoIndividual;
 import static Iniciar.QuadroVideos.tabPainelvideos;
+import static Iniciar.painel.textAreaEnviar;
 import configs.comandosServerCliente;
 import java.awt.Color;
 import java.awt.Component;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 
 import javax.swing.JLabel;
@@ -144,7 +146,7 @@ public class ExecucaoAtividadesTela {
 
         if (!verificarExistenciadeTabVideo(infor.getMacAddres())) {
             PainelVideoIndividual painelModeloVideo =  infor.getPainelVideo();
-            
+            painelModeloVideo.setName(infor.getMacAddres());
             
             tabPainelvideos.setTabPlacement(javax.swing.JTabbedPane.LEFT);
 
@@ -198,6 +200,7 @@ public class ExecucaoAtividadesTela {
                 painelRemover = (JPanel) component;
 
                 String tiulo = painelRemover.getName();
+                System.out.println("mac remover:"+tiulo);
 
                 if (tiulo.contains(Mac)) {
                     Iniciar.QuadroVideos.tabPainelvideos.removeTabAt(i);
@@ -251,6 +254,18 @@ public class ExecucaoAtividadesTela {
             }
         }
     }
+    
+     public static void enviarMensagem(String receptor, String mensagem, JCheckBox permissaoAceite) {
+
+        if (receptor.startsWith("Bancada:")) {
+            Servicos.Instancias.getExecucaoAtividadesInstacia().enviarComando(textAreaEnviar, "bc", receptor.replaceAll("Bancada:", ""), permissaoAceite.isSelected());
+        } else if (receptor.startsWith("Setor:")) {
+            Servicos.Instancias.getExecucaoAtividadesInstacia().enviarComando(textAreaEnviar, "grupo", receptor.replaceAll("Setor:", ""), permissaoAceite.isSelected());
+        } else {
+            Servicos.Instancias.getExecucaoAtividadesInstacia().enviarComando(textAreaEnviar, "mac", receptor.replaceAll("Mac:", ""), permissaoAceite.isSelected());
+        }
+    }
+
 
     public static void enviarArquivo(String lbMaquina) {
 
@@ -275,6 +290,7 @@ public class ExecucaoAtividadesTela {
 
         }
     }
+    
 
     public static void enviarMensagemTexto(String lbMaquina, JTextArea areaTexto) {
         if (lbMaquina.startsWith("Bancada:")) {

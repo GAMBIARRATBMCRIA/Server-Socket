@@ -15,7 +15,7 @@ public class configuracao {
     public static final String localBase = "C:\\Users\\LAB_01\\Documents\\base.txt";
     public static final int portaConexao = 12346;
     public static final String enderecoBradcast = "10.130.79.255";
-    public static final String currentVersionClient = "4";
+    public static final String currentVersionClient = "5";
     
     public static final Color B01 = new Color(255, 0, 0);     // Vermelho
     public static final Color B02 = new Color(0, 255, 0);     // Verde

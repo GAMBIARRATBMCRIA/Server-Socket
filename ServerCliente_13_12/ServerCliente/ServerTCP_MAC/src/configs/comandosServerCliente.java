@@ -49,11 +49,16 @@ public class comandosServerCliente {
     public static void DesbloquearInternet() {
         inserirComando("pr:" + "Desbloquearinternet");
     }
-    public static void IniciarTranmissaoVideo() {
+    public static String IniciarTranmissaoVideo() {
+        String comando = "StartRemoteDesktop";
         inserirComando("pr:" + "StartRemoteDesktop");
+        return comando;
+        
     }
-    public static void EncerrarTranmissaoVideo() {
+    public static String EncerrarTranmissaoVideo() {
+        String comando = "StopRemoteDesktop";
         inserirComando("pr:" + "StopRemoteDesktop");
+        return comando;
     }
 
     public static void AutenticadorRede(String login, String senha) {

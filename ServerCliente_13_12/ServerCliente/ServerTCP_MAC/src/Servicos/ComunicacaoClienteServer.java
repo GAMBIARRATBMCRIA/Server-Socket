@@ -2,7 +2,6 @@ package Servicos;
 
 import BaseDados.ClientesConectados;
 import BaseDados.infomacaoMaquinas;
-import ControleServerTCP.ServerVideo;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -28,6 +27,7 @@ public class ComunicacaoClienteServer extends Thread {
     private Socket clienteSocket;
 
     private ClientesConectados infoCliente;
+    public volatile String respostaClienteAtualizacao = null;
 
     public ComunicacaoClienteServer(Socket socketCliente) {
         try {
@@ -87,6 +87,10 @@ public class ComunicacaoClienteServer extends Thread {
                     carregarService(linha);
                 }
 
+                if (linha.contains("caminho de armazenenamento alterado para:") || linha.contains("Arquivo recebido com sucesso") || linha.contains("cancelar_envio_arquivo")) {
+                    this.respostaClienteAtualizacao = linha;
+                }
+
                 Thread.sleep(100);
             }
 
@@ -143,10 +147,93 @@ public class ComunicacaoClienteServer extends Thread {
             this.infoCliente.setStatusCliente("Ativo/Atualizado");
         } else {
             this.infoCliente.setStatusCliente("Ativo/Desatualizado");
+            System.out.println("Cliente desatualizado detectado. Iniciando Auto-Update para: " + this.infoCliente.getIpAddress());
+            iniciarAtualizacaoAutomatica();
         }
 
         return validado;
 
+    }
+
+    private String calcularHashArquivoServidor(String caminhoArquivo) throws Exception {
+        java.security.MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
+        try (java.io.BufferedInputStream bis = new java.io.BufferedInputStream(new java.io.FileInputStream(caminhoArquivo))) {
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = bis.read(buffer)) != -1) {
+                digest.update(buffer, 0, bytesRead);
+            }
+        }
+        byte[] hashBytes = digest.digest();
+        StringBuilder sb = new StringBuilder();
+        for (byte b : hashBytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
+
+    public void iniciarAtualizacaoAutomatica() {
+        new Thread(() -> {
+            try {
+                File pastaAtualizacoes = new File("C:\\SINC_DRIVER\\Atualizacoes");
+                if (!pastaAtualizacoes.exists() || !pastaAtualizacoes.isDirectory()) {
+                    System.out.println("Pasta de atualizacoes nao encontrada no Servidor.");
+                    return;
+                }
+
+                File[] arquivos = pastaAtualizacoes.listFiles();
+                if (arquivos == null || arquivos.length == 0) {
+                    System.out.println("Nenhum arquivo na pasta de atualizacoes.");
+                    return;
+                }
+
+                this.respostaClienteAtualizacao = null;
+                enviarMensagemSimples("altcaminho://att");
+                
+                int timeout = 0;
+                while (this.respostaClienteAtualizacao == null && timeout < 100) { // 10s max
+                    Thread.sleep(100);
+                    timeout++;
+                }
+
+                if (this.respostaClienteAtualizacao == null || !this.respostaClienteAtualizacao.contains("caminho de armazenenamento alterado para:")) {
+                    System.out.println("Falha ao preparar caminho no cliente.");
+                    return;
+                }
+
+                for (File file : arquivos) {
+                    if (file.isFile()) {
+                        System.out.println("Enviando arquivo de atualizacao: " + file.getName());
+                        String hash = calcularHashArquivoServidor(file.getAbsolutePath());
+
+                        this.respostaClienteAtualizacao = null;
+                        enviarMensagemSimples("tipodadoarquivo:" + file.getName());
+                        Thread.sleep(200);
+                        enviarMensagemSimples("hash:" + hash);
+                        Thread.sleep(200);
+                        
+                        enviarArquivo(file.getAbsolutePath());
+                        
+                        timeout = 0;
+                        while (this.respostaClienteAtualizacao == null && timeout < 600) { // 60s max
+                            Thread.sleep(100);
+                            timeout++;
+                        }
+
+                        if (this.respostaClienteAtualizacao == null || !this.respostaClienteAtualizacao.contains("Arquivo recebido com sucesso")) {
+                            System.out.println("Falha no envio ou arquivo corrompido: " + file.getName());
+                            System.out.println("Falha no envio ou arquivo corrompido: " + file.getName());
+                        }
+                    }
+                }
+
+                System.out.println("Todos os arquivos enviados. Disparando atualizar...");
+                enviarMensagemSimples("atualizar:");
+
+            } catch (Exception e) {
+                System.out.println("Erro na automacao de update: " + e.getMessage());
+            }
+        }).start();
     }
 
     public Boolean enviarMensagemPesada(String mensagem) {
