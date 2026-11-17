@@ -41,71 +41,69 @@ public class CarregarTable {
         return labelRenderer;
     }
 
-    public synchronized void tabelaConectados() {
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(CarregarTable.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        DefaultTableModel model;
-        model = (DefaultTableModel) Iniciar.painel.tableInterface.getModel();
-        // Preenche a tabela com os dados do vetor
-        model.setNumRows(0);
+    /**
+     * Atualiza a tabela de clientes conectados.
+     * CORREÇÃO BUG 4: executado dentro de SwingUtilities.invokeLater() para
+     * garantir que todas as operações de UI ocorram na Event Dispatch Thread (EDT).
+     */
+    public void tabelaConectados() {
+        // Captura o snapshot thread-safe antes de entrar na EDT
+        final ArrayList<ComunicacaoClienteServer> snapshot = Instancias.getControlebaseIntancia().getClistesConectadosLista();
 
-        // Defina o renderizador personalizado para a coluna que deve exibir JLabels
-        Iniciar.painel.tableInterface.getColumnModel().getColumn(4).setCellRenderer(labelPersonalizado());
-        Iniciar.painel.tableInterface.getColumnModel().getColumn(8).setCellRenderer(labelPersonalizado());
-        ArrayList<ComunicacaoClienteServer> ordenar = new ArrayList<>(Instancias.getControlebaseIntancia().getClistesConectadosLista());
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            DefaultTableModel model;
+            model = (DefaultTableModel) Iniciar.painel.tableInterface.getModel();
+            model.setNumRows(0);
 
-        // Ordenar a lista original com base na string da banda
-        Collections.sort(ordenar, new Comparator<ComunicacaoClienteServer>() {
-            @Override
-            public int compare(ComunicacaoClienteServer o1, ComunicacaoClienteServer o2) {
-                // Comparar bancadas primeiro
-                int compareBancada = o1.getonformacaoesCliente().getBancada().compareTo(o2.getonformacaoesCliente().getBancada());
+            Iniciar.painel.tableInterface.getColumnModel().getColumn(4).setCellRenderer(labelPersonalizado());
+            Iniciar.painel.tableInterface.getColumnModel().getColumn(8).setCellRenderer(labelPersonalizado());
 
-                if (compareBancada != 0) {
-                    return compareBancada;
+            ArrayList<ComunicacaoClienteServer> ordenar = new ArrayList<>(snapshot);
+
+            // Ordenar a lista pela bancada, depois posição
+            Collections.sort(ordenar, new Comparator<ComunicacaoClienteServer>() {
+                @Override
+                public int compare(ComunicacaoClienteServer o1, ComunicacaoClienteServer o2) {
+                    int compareBancada = o1.getonformacaoesCliente().getBancada().compareTo(o2.getonformacaoesCliente().getBancada());
+                    if (compareBancada != 0) {
+                        return compareBancada;
+                    }
+                    return o1.getonformacaoesCliente().getPosicao().compareTo(o2.getonformacaoesCliente().getPosicao());
                 }
-                // Se as bancadas forem iguais, compare os PCs
-                return o1.getonformacaoesCliente().getPosicao().compareTo(o2.getonformacaoesCliente().getPosicao());
-            }
-        });
-
-        // Exibir a lista ordenada
-        for (ComunicacaoClienteServer cliente : ordenar) {
-
-            String bancada = cliente.getonformacaoesCliente().getBancada();
-            JLabel label = new JLabel(bancada);
-            JLabel labelVideo = new JLabel();
-            
-            label.setOpaque(true);
-            labelVideo.setOpaque(true);
-            label.setBackground(atrbuir_cor(bancada));
-            
-            if (cliente.getonformacaoesCliente().getTransmissaoAtiva()) {
-                labelVideo.setBackground(configs.configuracao.VIDEO_CONNECTED);
-            }else{
-                labelVideo.setBackground(configs.configuracao.VIDEO_DECCONNECTED);
-            }
-
-            model.addRow(new Object[]{
-                cliente.getonformacaoesCliente().getNomeCliete(),
-                cliente.getonformacaoesCliente().getMacAddres(),
-                cliente.getonformacaoesCliente().getClientesocket().getInetAddress(),
-                cliente.getonformacaoesCliente().getSetor(),
-                label,
-                cliente.getonformacaoesCliente().getPosicao(),
-                cliente.getonformacaoesCliente().getStatusCliente(),
-                cliente.getonformacaoesCliente().getReceberComando(),
-                labelVideo
             });
 
-            ExecucaoAtividadesTela.adicionarTabPannerComunicacao(cliente.getonformacaoesCliente());
-        }
+            for (ComunicacaoClienteServer cliente : ordenar) {
+                String bancada = cliente.getonformacaoesCliente().getBancada();
+                JLabel label = new JLabel(bancada);
+                JLabel labelVideo = new JLabel();
 
-        ExecucaoAtividadesTela.qtdConectados(ordenar.size() + "");
+                label.setOpaque(true);
+                labelVideo.setOpaque(true);
+                label.setBackground(atrbuir_cor(bancada));
 
+                if (cliente.getonformacaoesCliente().getTransmissaoAtiva()) {
+                    labelVideo.setBackground(configs.configuracao.VIDEO_CONNECTED);
+                } else {
+                    labelVideo.setBackground(configs.configuracao.VIDEO_DECCONNECTED);
+                }
+
+                model.addRow(new Object[]{
+                    cliente.getonformacaoesCliente().getNomeCliete(),
+                    cliente.getonformacaoesCliente().getMacAddres(),
+                    cliente.getonformacaoesCliente().getClientesocket().getInetAddress(),
+                    cliente.getonformacaoesCliente().getSetor(),
+                    label,
+                    cliente.getonformacaoesCliente().getPosicao(),
+                    cliente.getonformacaoesCliente().getStatusCliente(),
+                    cliente.getonformacaoesCliente().getReceberComando(),
+                    labelVideo
+                });
+
+                ExecucaoAtividadesTela.adicionarTabPannerComunicacao(cliente.getonformacaoesCliente());
+            }
+
+            ExecucaoAtividadesTela.qtdConectados(ordenar.size() + "");
+        }); // fim invokeLater
     }
 
     public Color atrbuir_cor(String bancada) {
@@ -141,26 +139,17 @@ public class CarregarTable {
 
     }
 
+    /**
+     * Remove o cliente da lista de conectados e atualiza a tabela.
+     * CORREÇÃO BUG 4: usa removerCliente() do ConcurrentHashMap (atômico)
+     * em vez de iterar por índice num ArrayList, eliminando o risco de
+     * ConcurrentModificationException e salto de elementos.
+     */
     public synchronized Boolean removerClienteConexaoTable(String mac) {
-        boolean removido = false;
-
-        for (int i = 0; i < Instancias.getControlebaseIntancia().getClistesConectadosLista().size(); i++) {
-            // System.out.println("tamanho1 (CarregarTable):" + Instancias.getControlebaseIntancia().getClistesConectadosLista().size());
-            if (mac.equalsIgnoreCase(Instancias.getControlebaseIntancia().getClistesConectadosLista().get(i).getonformacaoesCliente().getMacAddres())) {
-                Instancias.getControlebaseIntancia().getClistesConectadosLista().remove(i);
-
-                //ExecucaoAtividadesTela.removerTabPanne(mac);
-                ExecucaoAtividadesTela.removerTabPanne(mac);
-
-                removido = true;
-            }
-        }
+        boolean removido = Instancias.getControlebaseIntancia().removerCliente(mac);
+        ExecucaoAtividadesTela.removerTabPanne(mac);
         tabelaConectados();
-        //System.out.println("removido table");
-
-        removido = true;
-
-        return removido;
+        return true; // sempre retorna true (tabela já foi atualizada)
     }
 
     public synchronized void selecTodos(Boolean selecionartodos) {

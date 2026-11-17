@@ -127,82 +127,123 @@ public class ClienteTCP_MAC {
         return process;
     }
 
+    /**
+     * Loop de conexão iterativo com backoff exponencial.
+     * Substitui a recursão anterior que causava StackOverflowError.
+     * O status da bandeja só é atualizado como "Conectado" APÓS autenticação bem-sucedida.
+     */
     public void conecta() {
-        try {
-            System.out.println("Abrindo conexão em:" + ipServer);
-            InstanciasGlobais.getBandejaSistema().setStatus("Conectando na porta:" + config.portaServidor);
-            BuscaServer b = new BuscaServer();
+        int tentativa = 0;
+        long delayMs = 2000; // backoff inicial: 2s, dobra a cada falha até 30s
+        final long MAX_DELAY_MS = 30000;
 
-            if (ipServer.isEmpty()) {
-                ipServer = b.buscaServer();
-            }
-            config.enderecoSevidor = ipServer;
-            String mac = "";
-            socket = new Socket(ipServer, config.portaServidor);
-
-            InstanciasGlobais.getBandejaSistema().setStatus("Conexão estabelecida.");
-
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new PrintWriter(socket.getOutputStream(), true);
-
-            mac = validar();
-            if (mac == null) {
-                out.println("Erro:mac");
-                throw new Exception("finalizar");
-            } else {
-                out.println(mac+":"+config.versao_cliente);
-            }
-            instacias = new ArmazenarInstacias(in, out, socket, mac, caminhoUser+"\\Desktop\\");
-            globalInstacia = new InstanciasGlobais(instacias, telaBloqueio, mensagemtela, telalog, log2);
-            aguardarMensagem();
-
-        } catch (Exception e) {
-            System.out.println("Erro desconhecido:" + e.getMessage());
-            InstanciasGlobais.getBandejaSistema().setStatus("Erro:" + e.getMessage());
-            desconectar();
+        while (true) {
+            tentativa++;
+            System.out.println("Tentativa de conexão #" + tentativa + " em: " + ipServer);
+            InstanciasGlobais.getBandejaSistema().setStatus("Conectando... (tentativa " + tentativa + ")");
 
             try {
-                System.out.println("Erro na conexao:" + e.getMessage() + "\nTentando novamente");
-
-                if (!e.getMessage().equalsIgnoreCase("finalizar")) {
-
-                    if (e.getMessage().contains(config.enderecoSevidor)) {
-                        ipServer = "";
+                // Passo 1: descobrir IP do servidor se necessário
+                if (ipServer == null || ipServer.isEmpty() || ipServer.equalsIgnoreCase("ADM")) {
+                    BuscaServer b = new BuscaServer();
+                    ipServer = b.buscaServer();
+                    if (ipServer == null) {
+                        System.out.println("Servidor não encontrado via broadcast. Aguardando " + delayMs / 1000 + "s...");
+                        InstanciasGlobais.getBandejaSistema().setStatus("Servidor não encontrado. Aguardando...");
+                        Thread.sleep(delayMs);
+                        delayMs = Math.min(delayMs * 2, MAX_DELAY_MS);
+                        continue;
                     }
-                    Thread.sleep(100);
-                    conecta();
                 }
-                Thread.sleep(1000);
-            } catch (Exception efd) {
+                config.enderecoSevidor = ipServer;
+
+                // Passo 2: estabelecer socket TCP
+                socket = new Socket(ipServer, config.portaServidor);
+                socket.setSoTimeout(60000); // 60s de timeout para detectar sockets mortos
+                // NÃO atualiza bandeja aqui — aguarda autenticação
+
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                out = new PrintWriter(socket.getOutputStream(), true);
+
+                // Passo 3: validar e autenticar MAC
+                String mac = validar();
+                if (mac == null || mac.isEmpty()) {
+                    System.out.println("Erro: MAC address não pôde ser obtido.");
+                    out.println("Erro:mac");
+                    desconectar();
+                    Thread.sleep(delayMs);
+                    delayMs = Math.min(delayMs * 2, MAX_DELAY_MS);
+                    continue;
+                }
+                out.println(mac + ":" + config.versao_cliente);
+
+                // Passo 4: só após autenticação enviada, inicializar e atualizar status
+                instacias = new ArmazenarInstacias(in, out, socket, mac, caminhoUser + "\\Desktop\\");
+                globalInstacia = new InstanciasGlobais(instacias, telaBloqueio, mensagemtela, telalog, log2);
+                InstanciasGlobais.getBandejaSistema().setStatus("Conectado ao servidor: " + ipServer);
+
+                // Passo 5: entrar no loop de recepção de mensagens (bloqueante)
+                aguardarMensagem();
+
+                // Se aguardarMensagem() retornou, o servidor fechou a conexão — reconectar
+                System.out.println("Conexão encerrada pelo servidor. Reconectando...");
                 desconectar();
-                try {
-                    Thread.sleep(5000);
+                delayMs = 2000; // reset do backoff após desconexão limpa
 
-                    conecta();
-                } catch (InterruptedException ex) {
-                    System.out.println("vlcx:" + ex.getMessage());
+            } catch (InterruptedException ie) {
+                System.out.println("Conexão interrompida.");
+                Thread.currentThread().interrupt();
+                break;
+
+            } catch (Exception e) {
+                String msg = e.getMessage() != null ? e.getMessage() : "erro desconhecido";
+                System.out.println("Erro na conexão (tentativa " + tentativa + "): " + msg);
+                InstanciasGlobais.getBandejaSistema().setStatus("Erro: " + msg);
+                desconectar();
+
+                // Se o IP atual falhou, forçar redescoberta na próxima tentativa
+                if (ipServer != null && msg.contains(ipServer)) {
+                    ipServer = "";
                 }
-                System.out.println("Erro:" + efd.getMessage());
-            }
 
+                try {
+                    Thread.sleep(delayMs);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+                delayMs = Math.min(delayMs * 2, MAX_DELAY_MS);
+            }
         }
     }
 
+    /**
+     * Fecha todos os recursos de rede de forma segura, sem recursão.
+     */
     void desconectar() {
         try {
-            out.flush();
-            out.close();
-            in.close();
-            socket.shutdownInput();
-            socket.shutdownOutput();
-            socket.close();
-            instacias = null;
-            while (!socket.isClosed()) {
-                desconectar();
+            if (out != null) {
+                out.flush();
+                out.close();
             }
         } catch (Exception ex) {
-            System.out.println("Erro ao desconectar" + ex.getMessage());
+            System.out.println("Erro ao fechar PrintWriter: " + ex.getMessage());
         }
+        try {
+            if (in != null) {
+                in.close();
+            }
+        } catch (Exception ex) {
+            System.out.println("Erro ao fechar BufferedReader: " + ex.getMessage());
+        }
+        try {
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
+        } catch (Exception ex) {
+            System.out.println("Erro ao fechar socket: " + ex.getMessage());
+        }
+        instacias = null;
     }
 
     public String validar() {
@@ -233,17 +274,43 @@ public class ClienteTCP_MAC {
         return macAddres;
     }
 
+    /**
+     * Loop de recepção de mensagens do servidor.
+     * Corrigido: checa null do readLine() (conexão encerrada pelo servidor)
+     * e trata SocketTimeoutException para detectar sockets zumbis.
+     */
     void aguardarMensagem() throws Exception {
         ArrayList<String> textoRecebido = new ArrayList<>();
         String caminho_inicial = instacias.getCamnhoGravacao();
 
-        while (instacias.getSocket().isConnected()) {
-            String line = instacias.getIn().readLine();
+        while (instacias.getSocket() != null && !instacias.getSocket().isClosed()) {
+            String line;
+            try {
+                line = instacias.getIn().readLine();
+            } catch (java.net.SocketTimeoutException ste) {
+                // Timeout de leitura — socket pode estar morto, envia ping
+                System.out.println("Timeout de leitura. Verificando conexao com ping...");
+                instacias.getOut().println("ping");
+                if (instacias.getOut().checkError()) {
+                    System.out.println("Erro ao enviar ping. Servidor pode estar inativo.");
+                    break;
+                }
+                continue;
+            }
+
+            // readLine() retorna null quando o servidor fecha a conexão
+            if (line == null) {
+                System.out.println("Servidor encerrou a conexão (readLine retornou null).");
+                break;
+            }
+
+            if (line.equalsIgnoreCase("pong")) {
+                continue;
+            }
 
             if (line.contains("tipodadoarquivo:")) {
                 instacias.setTipodado("tipodadoarquivo:");
                 instacias.setCamnhoGravacao(instacias.getCamnhoGravacao() + line.replaceAll("tipodadoarquivo:", ""));
-
                 System.out.println("O arquivo vai ser gravado em:" + instacias.getCamnhoGravacao());
             }
 
@@ -253,13 +320,12 @@ public class ClienteTCP_MAC {
 
                 while (instacias.getIn().ready()) {
                     line = instacias.getIn().readLine();
+                    if (line == null) break;
                     textoRecebido.add(line.replaceAll("\n", ""));
                 }
 
-                if (textoRecebido.get(0).toString().length() > 0) {
-
-                    new ExecutarComando(textoRecebido.get(0).toString(), instacias, textoRecebido);
-
+                if (!textoRecebido.isEmpty() && textoRecebido.get(0).length() > 0) {
+                    new ExecutarComando(textoRecebido.get(0), instacias, textoRecebido);
                     textoRecebido.clear();
                     caminho_inicial = instacias.getCamnhoGravacao();
                 }
@@ -267,13 +333,10 @@ public class ClienteTCP_MAC {
             } else {
                 System.out.println("recebendo arquivo...");
                 new receberArquivo(instacias).join();
-
                 instacias.setCamnhoGravacao(caminho_inicial);
-                //System.out.println("Recebido");
             }
 
             Thread.sleep(100);
-
         }
     }
 

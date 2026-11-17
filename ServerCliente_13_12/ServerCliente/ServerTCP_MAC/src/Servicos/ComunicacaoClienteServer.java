@@ -73,12 +73,18 @@ public class ComunicacaoClienteServer extends Thread {
             infoCliente.setTextoArea(new JTextArea());
             infoCliente.setBarraProgresso(new JProgressBar(0, 100));
 
-            Instancias.getControlebaseIntancia().setClistesLista(this);
+            Instancias.getControlebaseIntancia().adicionarCliente(
+                    infoCliente.getMacAddres(), this);
             Instancias.getCarregarTableInstacia().tabelaConectados();
 
             String linha;
 
             while ((linha = in.readLine()) != null) {
+
+                if (linha.equalsIgnoreCase("ping")) {
+                    enviarMensagemSimples("pong");
+                    continue;
+                }
 
                 infoCliente.getTextoArea().append(linha + "\n");
 //                System.out.println("recebido do cliente:" + linha);
@@ -338,14 +344,20 @@ public class ComunicacaoClienteServer extends Thread {
                 } catch (Exception ex) {
                     System.out.println("Erro (Comunicação cliente)" + ex.getMessage());
                     desconectador = false;
+                    break; // evita loop infinito em caso de erro persistente
                 }
             }
 
             Instancias.getCarregarTableInstacia().tabelaConectados();
 
-            while (removido == false) {
-//                System.out.println("removendo:" + infoCliente.getMacAddres());
-                removido = Instancias.getCarregarTableInstacia().removerClienteConexaoTable(infoCliente.getMacAddres());
+            // Remove da lista usando o novo método thread-safe do ConcurrentHashMap
+            if (infoCliente != null && infoCliente.getMacAddres() != null) {
+                
+                removido = Instancias.getControlebaseIntancia().removerClienteSeIgual(infoCliente.getMacAddres(), this);
+                
+                if (removido) {
+                    Instancias.getCarregarTableInstacia().removerClienteConexaoTable(infoCliente.getMacAddres());
+                }
             }
 
         } else {
@@ -458,7 +470,8 @@ public class ComunicacaoClienteServer extends Thread {
         String line;
 
         try {
-            while ((line = this.in.readLine()) != "fimservice") {
+            // CORREÇÃO BUG 6: usar equalsIgnoreCase em vez de != (comparação de referência)
+            while ((line = this.in.readLine()) != null && !line.equalsIgnoreCase("fimservice")) {
 
                 if (line.equalsIgnoreCase("fimservice")) {
                     break;

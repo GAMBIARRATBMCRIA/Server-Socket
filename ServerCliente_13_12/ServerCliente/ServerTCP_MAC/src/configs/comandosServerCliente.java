@@ -13,6 +13,12 @@ public class comandosServerCliente {
     public static void desligarPc() {
         inserirComando("cmd:" + "shutdown -s -f -t 00");
     }
+    public static void sincronizarHora() {
+        inserirComando("cmd:" + "z:/sinc_hora.bat");
+    }
+    public static void LimparArquivos() {
+        inserirComando("cmd:" + "z:/limpar_pastas_user.bat");
+    }
 
     public static void cacelarDesligarPc() {
         inserirComando("cmd:" + "shutdown /a");
@@ -66,6 +72,13 @@ public class comandosServerCliente {
             inserirComando("cmd:" + "java -jar \"z:/modulo_autenticador.jar\"");
         } else {
             inserirComando("cmd:" + "java -jar \"z:/modulo_autenticador.jar\" " + login + " " + senha);
+        }
+    }
+    public static void SincronizarArquivos(String pasta) {
+        if (pasta.isEmpty()) {
+            inserirComando("cmd:" + "java -jar \"z:/cliente_sinc.jar\"");
+        } else {
+            inserirComando("cmd:" + "java -jar \"z:/cliente_sinc.jar\" " + pasta);
         }
     }
     public static void setCaminhoAtualizacao(){
