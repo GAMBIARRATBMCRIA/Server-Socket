@@ -17,7 +17,9 @@ public class config {
 
     public static int portaServidor = 12346;//12346
     public static String enderecoSevidor = "ADM";
+    public static String enderecoBroadcast = "10.130.79.255"; // endereço de broadcast para descoberta UDP
     public static String versao_cliente = "5";
+
 
     public static String paramentroMensagem = "msg::";
     public static String paramentroComandoCmd = "comd::";

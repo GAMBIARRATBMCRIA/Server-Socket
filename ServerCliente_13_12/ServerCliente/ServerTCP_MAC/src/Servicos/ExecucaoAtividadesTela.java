@@ -42,104 +42,148 @@ public class ExecucaoAtividadesTela {
     }
 
     public synchronized static void adicionarTabPannerComunicacao(ClientesConectados infor) {
-        if (!verificarExistenciadeTab(infor.getMacAddres())) {
-            JLabel labelNome = new JLabel();
-            JLabel LabelMac = new JLabel();
-            JLabel labelSetor = new JLabel();
-            JLabel labelBancada = new JLabel();
-            JLabel labelPosicao = new JLabel();
-            JButton botaoLimpar = new JButton();
-            JPanel painelModelo = new JPanel();
-
-            JProgressBar barraprogresso = infor.getBarraProgresso();
-            barraprogresso.setStringPainted(true);
-            barraprogresso.setForeground(Color.BLUE);
-
-            painelModelo.setName(infor.getMacAddres());
-
-            JTextArea textoAreaTablePanne = infor.getTextoArea();
-
-            JScrollPane barraRolagem = new JScrollPane();
-
-            barraRolagem.setViewportView(textoAreaTablePanne);
-
-            labelNome.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-            labelNome.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-            labelNome.setText("Nome:");
-
-            LabelMac.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-            LabelMac.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-            LabelMac.setText("MAC:" + infor.getMacAddres());
-
-            labelSetor.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-            labelSetor.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-            labelSetor.setText("Setor:" + infor.getSetor());
-
-            labelBancada.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-            labelBancada.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-            labelBancada.setText("Bancada:" + infor.getBancada());
-
-            labelPosicao.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-            labelPosicao.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-            labelPosicao.setText("Posição:" + infor.getPosicao());
-
-            botaoLimpar.setText("Limpar");
-            botaoLimpar.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    infor.getTextoArea().setText("");
-                }
-            });
-
-            textoAreaTablePanne.setEditable(false);
-            textoAreaTablePanne.setColumns(20);
-            textoAreaTablePanne.setRows(5);
-            textoAreaTablePanne.setBorder(javax.swing.BorderFactory.createTitledBorder("Respostas: " + infor.getMacAddres()));
-
-            javax.swing.GroupLayout painelModeloLayout = new javax.swing.GroupLayout(painelModelo);
-            painelModelo.setLayout(painelModeloLayout);
-            painelModeloLayout.setHorizontalGroup(
-                    painelModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(painelModeloLayout.createSequentialGroup()
-                                    .addContainerGap()
-                                    .addGroup(painelModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(barraRolagem)
-                                            .addGroup(painelModeloLayout.createSequentialGroup()
-                                                    .addComponent(labelNome, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addGap(40, 40, 40)
-                                                    .addComponent(LabelMac, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addGap(40, 40, 40)
-                                                    .addComponent(labelBancada, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addGap(40, 40, 40)
-                                                    .addComponent(labelPosicao, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 121, Short.MAX_VALUE)
-                                                    .addComponent(botaoLimpar, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelModeloLayout.createSequentialGroup()
-                                                    .addGap(0, 0, Short.MAX_VALUE)
-                                                    .addComponent(barraprogresso, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addContainerGap())
-            );
-            painelModeloLayout.setVerticalGroup(
-                    painelModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(painelModeloLayout.createSequentialGroup()
-                                    .addContainerGap()
-                                    .addComponent(barraRolagem, javax.swing.GroupLayout.DEFAULT_SIZE, 579, Short.MAX_VALUE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addGroup(painelModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                            .addComponent(labelBancada, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(LabelMac, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(labelPosicao, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(labelNome, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(botaoLimpar))
-                                    .addGap(7, 7, 7)
-                                    .addComponent(barraprogresso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addContainerGap())
-            );
-
-            //tablePanneDialogCliente.addTab("MAC:", painelModelo);
-            barraprogresso.setVisible(false);
-            barraprogresso.setValue(0);
-            Iniciar.clientesConectados.tablePanneDialogCliente.add(infor.getBancada() + "_" + infor.getPosicao() + ":" + infor.getMacAddres(), painelModelo);
+        // Verifica se já existe uma aba para este MAC (caso de reconexão)
+        int tabExistenteIndex = -1;
+        for (int i = 0; i < Iniciar.clientesConectados.tablePanneDialogCliente.getTabCount(); i++) {
+            if (Iniciar.clientesConectados.tablePanneDialogCliente.getTitleAt(i).contains(infor.getMacAddres())) {
+                tabExistenteIndex = i;
+                break;
+            }
         }
+
+        if (tabExistenteIndex >= 0) {
+            // RECONEXÃO: aba já existe — atualiza a JTextArea e JProgressBar dentro do painel
+            // para que o painel exiba as respostas da nova sessão.
+            Component comp = Iniciar.clientesConectados.tablePanneDialogCliente.getComponentAt(tabExistenteIndex);
+            if (comp instanceof JPanel) {
+                JPanel painelExistente = (JPanel) comp;
+                // Percorre os componentes do painel procurando o JScrollPane (que contém a JTextArea)
+                for (Component c : painelExistente.getComponents()) {
+                    if (c instanceof JScrollPane) {
+                        JScrollPane scroll = (JScrollPane) c;
+                        // Substitui a viewport pela nova JTextArea da nova sessão
+                        JTextArea novaArea = infor.getTextoArea();
+                        novaArea.setEditable(false);
+                        novaArea.setColumns(20);
+                        novaArea.setRows(5);
+                        novaArea.setBorder(javax.swing.BorderFactory.createTitledBorder("Respostas: " + infor.getMacAddres()));
+                        scroll.setViewportView(novaArea);
+                    } else if (c instanceof JProgressBar) {
+                        // Substitui a barra de progresso pela nova instância
+                        JProgressBar novaBarraProgresso = infor.getBarraProgresso();
+                        novaBarraProgresso.setStringPainted(true);
+                        novaBarraProgresso.setForeground(Color.BLUE);
+                        novaBarraProgresso.setVisible(false);
+                        novaBarraProgresso.setValue(0);
+                        // Troca o componente dentro do painel
+                        painelExistente.remove(c);
+                        painelExistente.add(novaBarraProgresso);
+                        painelExistente.revalidate();
+                        painelExistente.repaint();
+                    }
+                }
+                System.out.println("[ExecucaoAtividadesTela] Aba atualizada para reconexão MAC: " + infor.getMacAddres());
+            }
+            return;
+        }
+
+        // Aba não existe — cria normalmente (primeira conexão)
+        JLabel labelNome = new JLabel();
+        JLabel LabelMac = new JLabel();
+        JLabel labelSetor = new JLabel();
+        JLabel labelBancada = new JLabel();
+        JLabel labelPosicao = new JLabel();
+        JButton botaoLimpar = new JButton();
+        JPanel painelModelo = new JPanel();
+
+        JProgressBar barraprogresso = infor.getBarraProgresso();
+        barraprogresso.setStringPainted(true);
+        barraprogresso.setForeground(Color.BLUE);
+
+        painelModelo.setName(infor.getMacAddres());
+
+        JTextArea textoAreaTablePanne = infor.getTextoArea();
+
+        JScrollPane barraRolagem = new JScrollPane();
+
+        barraRolagem.setViewportView(textoAreaTablePanne);
+
+        labelNome.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        labelNome.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        labelNome.setText("Nome:");
+
+        LabelMac.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        LabelMac.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        LabelMac.setText("MAC:" + infor.getMacAddres());
+
+        labelSetor.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        labelSetor.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        labelSetor.setText("Setor:" + infor.getSetor());
+
+        labelBancada.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        labelBancada.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        labelBancada.setText("Bancada:" + infor.getBancada());
+
+        labelPosicao.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        labelPosicao.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        labelPosicao.setText("Posição:" + infor.getPosicao());
+
+        botaoLimpar.setText("Limpar");
+        botaoLimpar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                infor.getTextoArea().setText("");
+            }
+        });
+
+        textoAreaTablePanne.setEditable(false);
+        textoAreaTablePanne.setColumns(20);
+        textoAreaTablePanne.setRows(5);
+        textoAreaTablePanne.setBorder(javax.swing.BorderFactory.createTitledBorder("Respostas: " + infor.getMacAddres()));
+
+        javax.swing.GroupLayout painelModeloLayout = new javax.swing.GroupLayout(painelModelo);
+        painelModelo.setLayout(painelModeloLayout);
+        painelModeloLayout.setHorizontalGroup(
+                painelModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(painelModeloLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(painelModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(barraRolagem)
+                                        .addGroup(painelModeloLayout.createSequentialGroup()
+                                                .addComponent(labelNome, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(40, 40, 40)
+                                                .addComponent(LabelMac, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(40, 40, 40)
+                                                .addComponent(labelBancada, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(40, 40, 40)
+                                                .addComponent(labelPosicao, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 121, Short.MAX_VALUE)
+                                                .addComponent(botaoLimpar, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painelModeloLayout.createSequentialGroup()
+                                                .addGap(0, 0, Short.MAX_VALUE)
+                                                .addComponent(barraprogresso, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap())
+        );
+        painelModeloLayout.setVerticalGroup(
+                painelModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(painelModeloLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(barraRolagem, javax.swing.GroupLayout.DEFAULT_SIZE, 579, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(painelModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(labelBancada, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(LabelMac, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(labelPosicao, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(labelNome, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(botaoLimpar))
+                                .addGap(7, 7, 7)
+                                .addComponent(barraprogresso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
+        );
+
+        //tablePanneDialogCliente.addTab("MAC:", painelModelo);
+        barraprogresso.setVisible(false);
+        barraprogresso.setValue(0);
+        Iniciar.clientesConectados.tablePanneDialogCliente.add(infor.getBancada() + "_" + infor.getPosicao() + ":" + infor.getMacAddres(), painelModelo);
     }
 
     public synchronized static void adicionarTabPannerVideo(ClientesConectados infor) {
